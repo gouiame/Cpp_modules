@@ -1,9 +1,6 @@
 #include "Form.hpp"
 
-Form::Form() : _name("Default"), _sign(false), grade_sign(150), grade_execute(150)
-{
-    std::cout << "Default constructor called" << std::endl;
-}
+Form::Form() : _name("Default"), _sign(false), grade_sign(150), grade_execute(150){}
 
 Form::Form(std::string name, int signGrade, int executeGrad) : _name(name), grade_sign(signGrade), grade_execute(executeGrad)
 {
@@ -18,48 +15,54 @@ Form::Form(const Form &copy) : _name(copy._name), _sign(copy._sign), grade_sign(
     *this = copy;
 }
 
-Form::~Form()
-{
-    std::cout << "Form " << this->_name << " destructor called" << std::endl;
-}
+Form::~Form(){}
 
-Form &Form::operator=(const Form &copy) {
+Form &Form::operator=(const Form &copy)
+{
     if (this != &copy)
         this->_sign = copy.getSigned();
     return (*this);
 }
 
-std::string Form::getName() const {
+std::string Form::getName() const
+{
     return (this->_name);
 }
 
-bool Form::getSigned() const {
+bool Form::getSigned() const
+{
     return (this->_sign);
 }
 
-int Form::getGradeToSign() const {
+int Form::getGradeToSign() const
+{
     return (this->grade_sign);
 }
 
-int Form::getGradeToExecute() const {
+int Form::getGradeToExecute() const
+{
     return (this->grade_execute);
 }
 
-void Form::beSigned(Bureaucrat &bureaucrat) {
+void Form::beSigned(Bureaucrat &bureaucrat)
+{
     if (bureaucrat.getGrade() > this->grade_sign)
         throw Form::GradeTooLowException();
     this->_sign = true;
 }
 
-const char* Form::GradeTooHighException::what() const throw() {
-    return ("Grade too high");
+const char* Form::GradeTooHighException::what() const throw()
+{
+    return (" Grade too high");
 }
 
-const char* Form::GradeTooLowException::what() const throw() {
-    return ("Grade too low");
+const char* Form::GradeTooLowException::what() const throw()
+{
+    return (" Grade too low");
 }
 
-std::ostream &operator<<(std::ostream &out, const Form &form) {
+std::ostream &operator<<(std::ostream &out, const Form &form)
+{
     out << "Form " << form.getName() << " is ";
     if (form.getSigned())
         out << "signed";

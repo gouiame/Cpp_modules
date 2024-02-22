@@ -2,7 +2,8 @@
 
 int main()
 {
-    try{
+    try
+    {
         Bureaucrat  b("B", 10);
         std::cout << b;
         b.incrementGrade();

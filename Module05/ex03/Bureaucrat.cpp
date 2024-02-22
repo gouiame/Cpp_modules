@@ -65,7 +65,7 @@ std::ostream &operator<<(std::ostream &out, const Bureaucrat &bureaucrat)
 
 void    Bureaucrat::executeForm(AForm const & form)
 {
-    if (form.getSigned() == false)
+      if (form.getSigned() == false)
     {
         std::cout <<  "This form is not signed yet !"  << std::endl;
         return;
