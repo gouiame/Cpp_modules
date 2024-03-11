@@ -8,21 +8,21 @@
 #include <sstream>
 #include <fstream>
 
-class BitcoinExchange {
+class BitcoinExchange 
+{
     private:
-        std::map<std::string, double> _bitcoinValues;
+        std::map<std::string, std::string> _bitcoinValues;
     public:
         BitcoinExchange();
         BitcoinExchange(BitcoinExchange const &other);
         BitcoinExchange &operator=(BitcoinExchange const &other);
         ~BitcoinExchange();
-        void    outputBitcoinValues(std::string fileName);
+
+        void makeBitcoin(char *filename);
+        void displayBitcoinValues(std::string &date, std::string &value);
 };
 
-std::vector<std::string> splitString(std::string str, char delimiter);
-std::string skipSpaces(std::string str);
 
-double myStod(std::string str);
 
 
 #endif // BITCOINEXCHANGE_HPP
