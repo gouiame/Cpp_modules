@@ -1,42 +1,27 @@
-
-
-
-CC = c++
-
-CFLAGS = -Wall -Werror -Wextra -std=c++98 -fsanitize=address -g3
-
 NAME = btc
 
-HEADERS = BitcoinExchange.hpp
+INC = BitcoinExchange.hpp
 
-SRC = main.cpp BitcoinExchange.cpp
+SRC		=	main.cpp BitcoinExchange.cpp
 
-OBJECTS = ./Object_files
+CC 		= c++ -std=c++98
 
+FLAGS	= -Wall -Wextra -Werror
 
-OBJ = $(addprefix $(OBJECTS)/, $(SRC:.cpp=.o))
-
+OBJS 	= $(SRC:.cpp=.o)
 
 all: $(NAME)
 
+$(NAME): $(OBJS)
+	$(CC) $(FLAGS) $(OBJS) -o $(NAME)
 
-$(NAME): $(OBJ)
-	$(CC) $(CFLAGS) $(OBJ) -o $(NAME)
-
-
-$(OBJECTS)/%.o: %.cpp $(HEADERS)
-	@mkdir -p $(OBJECTS)
-	$(CC) $(CFLAGS) -c $< -o $@
-
+%.o: %.cpp $(INC)
+		$(CC) $(FLAGS) -o $@ -c $<
 
 clean:
-	rm -rf $(OBJECTS)
-
+	rm -rf $(OBJS)
 
 fclean: clean
-	rm -f $(NAME)
-
+	rm -rf $(NAME)
 
 re: fclean all
-
-.PHONY: clean fclean re

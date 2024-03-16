@@ -1,8 +1,8 @@
 #include "BitcoinExchange.hpp"
-#include <iostream>
 
 
-BitcoinExchange::BitcoinExchange() {
+BitcoinExchange::BitcoinExchange()
+{
     std::ifstream file("data.csv");
     std::string line;
     size_t length;
@@ -13,6 +13,11 @@ BitcoinExchange::BitcoinExchange() {
     if (file.is_open())
     {
         std::getline(file, line);
+        if (line.empty())
+        {
+            std::cerr << "Error : file is empty" << std::endl;
+            exit(1);
+        }
         while (std::getline(file, line))
         {
             length = line.length();
@@ -28,11 +33,6 @@ BitcoinExchange::BitcoinExchange() {
         std::cerr << "Eroor : file not found" << std::endl;
         exit(1);
     }
-    // std::map<std::string, std::string>::iterator it = _bitcoinValues.begin();
-    // for(it = _bitcoinValues.begin(); it != _bitcoinValues.end(); it++)
-    // {
-    //     std::cout << it->first << " " << it->second << "   ----"<< std::endl;
-    // }
 }
 
 BitcoinExchange::BitcoinExchange(BitcoinExchange const &other)
@@ -69,18 +69,42 @@ void checkFile(std::ifstream &file)
     }
 }
 
+void    strtrim(std::string &str)
+{
+    size_t start = str.find_first_not_of(" \t");
+    size_t end = str.find_last_not_of(" \t");
+
+    if (start == std::string::npos)
+    {
+        str.clear();
+        return;
+    }
+    str = str.substr(start, end - start + 1);
+}
+
 bool checkInput(std::string &date, std::string &value, std::string &line)
 {
     size_t pos;
-
     pos = line.find('|');
     if (pos == std::string::npos)
     {
         std::cout << "Error: bad input => " << line << std::endl;
         return false;
     }
+    if (pos == 0 || pos == line.length() - 1)
+    {
+        std::cout << "Error: missing date or value "<< std::endl;
+        return false;
+    }
     date = line.substr(0, pos - 1);
     value = line.substr(pos + 2, line.length() - pos - 2);
+    strtrim(date);
+    strtrim(value);
+    if (date.empty() || value.empty())
+    {
+        std::cout << "Error: bad inputt => " << line << std::endl;
+        return false;
+    }
     return true;
 }
 
@@ -103,10 +127,10 @@ std::string itostr(int &val)
 
 bool checkDate(int &yearInt, int &monthInt, int &dayInt)
 {
-    if (yearInt < 2009 || yearInt > 2022)
+    if (yearInt < 2009 || yearInt > 2024)
         return false;
     if (monthInt < 1 || monthInt > 12)
-        return false;
+            return false;
     if (dayInt < 1 || dayInt > 31)
         return false;
     if ( (monthInt == 4 || monthInt == 6 || monthInt == 9 || monthInt == 11) && dayInt > 30)
@@ -124,21 +148,43 @@ bool checkDate(int &yearInt, int &monthInt, int &dayInt)
                 return false;
         }
     }
+    if (yearInt == 2009 && monthInt == 1 && dayInt < 2)
+        return false;
+    return true;
+}
+
+bool checkDigit(std::string &year, std::string &month, std::string &day)
+{
+    for (size_t i = 0; i < year.length(); i++)
+    {
+        if (std::isdigit(year[i]) == false)
+            return false;
+    }
+    for (size_t i = 0; i < month.length(); i++)
+    {
+        if (std::isdigit(month[i]) == false)
+            return false;
+    }
+    for (size_t i = 0; i < day.length(); i++)
+    {
+        if (std::isdigit(day[i]) == false)
+            return false;
+    }
     return true;
 }
 
 bool dateValide(std::string &date)
 {
-
-    std::string year = date.substr(0, 4);
-    std::string month = date.substr(5, 2);
-    std::string day = date.substr(8, 2);
-    
     if (date.length() != 10)
         return false;
     if (date[4] != '-' || date[7] != '-')
         return false;
+    std::string year = date.substr(0, 4);
+    std::string month = date.substr(5, 2);
+    std::string day = date.substr(8, 2);
     if (year.length() != 4 || month.length() != 2 || day.length() != 2)
+            return false;
+    if (checkDigit(year, month, day) == false)
         return false;
     int yearInt = strtoi(year);
     int monthInt = strtoi(month);
@@ -158,6 +204,8 @@ bool valueValide(std::string &value)
         j++;
     for (size_t i = j ; i < length; i++)
     {
+        if (value[0] == '.')
+            return false;
         if (value[i] == '.')
         {
             if (point == 1)
@@ -240,7 +288,7 @@ void BitcoinExchange::displayBitcoinValues(std::string &date, std::string &value
     std::map<std::string, std::string>::iterator it;
 
     std::string date_csv = date;
-    std::string temp;
+    std::string temp; 
 
     while(1)
     {
